@@ -19,6 +19,8 @@ current_dir = Path(__file__).parent
 app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
           "static")), name="static")
 
+from typing import List, Dict
+
 # In-memory activity database
 activities = {
     "Chess Club": {
@@ -77,10 +79,59 @@ activities = {
     }
 }
 
+# In-memory project ideas database
+project_ideas: Dict[str, Dict] = {}
+
+
 
 @app.get("/")
 def root():
     return RedirectResponse(url="/static/index.html")
+
+
+# -------- Project Ideas Endpoints --------
+@app.get("/project-ideas")
+def get_project_ideas():
+    """Get all project ideas and their collaborators"""
+    return project_ideas
+
+
+@app.post("/project-ideas/submit")
+def submit_project_idea(title: str, description: str, owner_email: str):
+    """Submit a new project idea"""
+    if title in project_ideas:
+        raise HTTPException(status_code=400, detail="Project idea with this title already exists")
+    project_ideas[title] = {
+        "description": description,
+        "owner_email": owner_email,
+        "collaborators": [owner_email]
+    }
+    return {"message": f"Project idea '{title}' submitted by {owner_email}"}
+
+
+@app.post("/project-ideas/{title}/join")
+def join_project_idea(title: str, email: str):
+    """Join a project idea as a collaborator"""
+    if title not in project_ideas:
+        raise HTTPException(status_code=404, detail="Project idea not found")
+    if email in project_ideas[title]["collaborators"]:
+        raise HTTPException(status_code=400, detail="Already a collaborator")
+    project_ideas[title]["collaborators"].append(email)
+    return {"message": f"{email} joined project idea '{title}' as collaborator"}
+
+
+@app.delete("/project-ideas/{title}/leave")
+def leave_project_idea(title: str, email: str):
+    """Leave a project idea as a collaborator"""
+    if title not in project_ideas:
+        raise HTTPException(status_code=404, detail="Project idea not found")
+    if email not in project_ideas[title]["collaborators"]:
+        raise HTTPException(status_code=400, detail="Not a collaborator")
+    # Prevent owner from leaving their own project
+    if email == project_ideas[title]["owner_email"]:
+        raise HTTPException(status_code=400, detail="Owner cannot leave their own project idea")
+    project_ideas[title]["collaborators"].remove(email)
+    return {"message": f"{email} left project idea '{title}'"}
 
 
 @app.get("/activities")

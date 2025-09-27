@@ -12,11 +12,11 @@
       <h2>Extracurricular Activities</h2>
     </header>
 
+
     <main>
       <section id="activities-container">
         <h3>Available Activities</h3>
         <div id="activities-list">
-          <!-- Activities will be loaded here -->
           <p>Loading activities...</p>
         </div>
       </section>
@@ -32,12 +32,35 @@
             <label for="activity">Select Activity:</label>
             <select id="activity" required>
               <option value="">-- Select an activity --</option>
-              <!-- Activity options will be loaded here -->
             </select>
           </div>
           <button type="submit">Sign Up</button>
         </form>
         <div id="message" class="hidden"></div>
+      </section>
+
+      <section id="project-ideas-container">
+        <h3>Student Project Ideas</h3>
+        <div id="project-ideas-list">
+          <p>Loading project ideas...</p>
+        </div>
+        <h4>Submit a New Project Idea</h4>
+        <form id="project-idea-form">
+          <div class="form-group">
+            <label for="project-title">Project Title:</label>
+            <input type="text" id="project-title" required placeholder="e.g. Robotics Club" />
+          </div>
+          <div class="form-group">
+            <label for="project-description">Description:</label>
+            <input type="text" id="project-description" required placeholder="Describe your idea..." />
+          </div>
+          <div class="form-group">
+            <label for="project-owner-email">Your Email:</label>
+            <input type="email" id="project-owner-email" required placeholder="your-email@mergington.edu" />
+          </div>
+          <button type="submit">Submit Project Idea</button>
+        </form>
+        <div id="project-message" class="hidden"></div>
       </section>
     </main>
 
